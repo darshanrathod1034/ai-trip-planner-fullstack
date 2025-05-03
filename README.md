@@ -1,4 +1,4 @@
-![Screenshot 2025-05-02 215534](https://github.com/user-attachments/assets/796d3936-e803-4e74-9fb3-7e8644b2cbe1)# ai-trip-planner
+
 
 # 🧠 AI Trip Planner 2.0
 
