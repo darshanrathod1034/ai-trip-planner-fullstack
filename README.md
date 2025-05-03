@@ -1,6 +1,6 @@
 
 
-# 🧠 AI Trip Planner 2.0
+# 🧠 AI Trip Planner 
 
 Your **personal travel assistant** powered by AI. Generate day-wise optimized itineraries based on destination, budget, interests, and travel duration. 🧳✨  
 Designed to minimize travel time and cost using smart distance optimization and clustering logic.
