@@ -12,7 +12,7 @@ Designed to minimize travel time and cost using smart distance optimization and 
 | Frontend     | Backend           | AI & APIs                         | Database   | Auth & Security        |
 |--------------|-------------------|-----------------------------------|------------|------------------------|
 | React.js     | Node.js + Express | Google Maps API, Distance Matrix  | MongoDB    | JWT, bcrypt, OTP       |
-| TailwindCSS  | RESTful API       | OpenRouteService (ORS fallback)   | Mongoose   | Cookie-based Sessions  |
+| TailwindCSS  | RESTful API       | unsplash API   , Google text api  | Mongoose   | Cookie-based Sessions  |
 
 ---
 
