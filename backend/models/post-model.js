@@ -9,6 +9,10 @@ const postSchema = new mongoose.Schema({
   },
   picture: { type: String, required: true }, // ✅ Now this stores Cloudinary URL
   likes: { type: Number, default: 0 },
+   likedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users'
+  }],
   comments: [{
     userid: { 
       type: mongoose.Schema.Types.ObjectId, 

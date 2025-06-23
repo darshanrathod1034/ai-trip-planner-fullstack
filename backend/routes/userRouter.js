@@ -1,9 +1,10 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-//import userModel from '../models/user-model.js'; // Ensure correct file path
-import userModel from '../models/user-model.js'; // Adjust the path as necessary
-import postModel from '../models/post-model.js'; // Ensure correct file path
+import userModel from '../models/user-model.js'; 
+import postModel from '../models/post-model.js'; 
+import Trip from '../models/tripModel.js'; 
+import Place from '../models/place.js'; 
 import Review  from'../models/Review.js';
 import multer from 'multer';
 import cloudinary from "cloudinary";
@@ -150,7 +151,6 @@ userRouter.post("/createpost", isLoggedIn, upload.single("image"), async (req, r
     res.status(500).json({ message: "Server error" });
   }
 });
-
 userRouter.get('/myposts',isLoggedIn, async (req, res) => {
   try {
 
@@ -163,9 +163,73 @@ userRouter.get('/myposts',isLoggedIn, async (req, res) => {
   }
 });
 
+userRouter.get('/userdetails', isLoggedIn, async (req, res) => {
+  try {
+    let user = await userModel.findOne({ email: req.user.email }).select("fullname email phone");
+    res.status(200).json({ fullname: user.fullname, email: user.email, phone: user.phone });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+userRouter.post('/updateprofile', isLoggedIn, async (req, res) => {
+  try {
+    const { fullname, email, phone } = req.body;
+    let user = await userModel.findOne({ email: req.user.email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.fullname = fullname || user.fullname;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    await user.save();
+    res.status(200).json({ message: "Profile updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+userRouter.get('/mytrips', isLoggedIn, async (req, res) => {
+  try {
+    let user = await userModel.findOne({ email: req.user.email }).select("fullname email phone trips").populate('trips');
+    res.status(200).json({ trips: user.trips, fullname: user.fullname, email: user.email, phone: user.phone }); 
+  } catch (err) {
+    console.error(err); 
+    res.status(500).json({ message: "Server error" });}
+});
+
+userRouter.get('/mytrip/:tripId', isLoggedIn, async (req, res) => {
+  try {
+    let trip = await Trip.findById(req.params.tripId).populate('itinerary.places');
+    if (!trip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+    res.status(200).json({ trip });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });}
+});
+
+userRouter.post('/deletetrip/:tripId', isLoggedIn, async (req, res) => {
+  try {
+    let trip = await Trip.findByIdAndDelete(req.params.tripId);
+    if (!trip) {
+      return res.status(404).json({ message: "Trip not found" });
+    } 
+    let user = await userModel.findOne({ email: req.user.email });
+    user.trips = user.trips.filter(t => t.toString() !== trip._id.toString());
+    await user.save();
+    res.status(200).json({ message: "Trip deleted successfully" });
+  } catch (err) {   
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 userRouter.get('/allposts', async (req, res) => {
   try {
-    const posts = await postModel
+    const posts =  await postModel
       .find()
       .populate("userid", "name"); // Only fetch the name field from User
 
@@ -176,6 +240,26 @@ userRouter.get('/allposts', async (req, res) => {
   }
 });
 
+userRouter.get('/addReview', async (req, res) => {
+  try {
+    const { userId, placeId, placeName, rating } = req.body;
+    if (!userId || !placeId || !placeName || !rating) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    const newReview = new Review({
+      userId,
+      placeId,
+      placeName,
+      rating,
+    });
+    await newReview.save();
+    res.status(201).json({ message: "Review added successfully", review: newReview });
+  } catch (error) {
+    console.error("Error adding review:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 userRouter.post('/likepost/:id',isLoggedIn, async (req, res) => {
   try {
@@ -183,6 +267,26 @@ userRouter.post('/likepost/:id',isLoggedIn, async (req, res) => {
     post.likes += 1;
     await post.save();
     res.status(200).json({ message: "Post liked" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+userRouter.post('/posts/addcomment/:id', isLoggedIn, async (req, res) => {
+  try {
+    const { comment } = req.body;
+    let user = await userModel.findOne({ email: req.user.email });
+
+    if (!comment) {
+      return res.status(400).json({ message: "Comment is required" });
+    }
+
+    let post = await postModel.findById(req.params.id);
+    post.comments.push({ userid: user._id, comment });
+    await post.save();
+
+    res.status(200).json({ message: "Comment added successfully", post });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

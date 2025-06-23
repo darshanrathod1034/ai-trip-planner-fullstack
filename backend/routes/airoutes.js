@@ -3,7 +3,7 @@ import  getHybridRecommendations  from "../services/hybridRecommendation.js";
 import generateAIItinerary  from "../services/generateAIItinerary.js";
 import userModel from "../models/user-model.js";
 import Place from "../models/place.js";
-//import { fetchTouristAttractions } from "../services/osmService.js"; // Fetch places
+
 const airouters = express.Router();
 
 // Recommend places using Hybrid AI System
@@ -23,16 +23,16 @@ if (!aiResponse || !aiResponse.itinerary) {
 }
     console.log("Generated Itinerary:", aiResponse);
 
-    // ✅ Extract `itinerary` array from the returned object
+    //  Extract `itinerary` array from the returned object
     let recommendations = aiResponse.itinerary || [];
 
-    // ✅ Ensure it's an array
+    //  Ensure it's an array
     if (!Array.isArray(recommendations)) {
       console.error("❌ Error: itinerary is not an array!");
       recommendations = [];
     }
 
-    // ✅ Populate places before returning
+    //  Populate places before returning
     for (let day of recommendations) {
       if (day.places && Array.isArray(day.places)) {
         day.places = await Place.find({ _id: { $in: day.places } });

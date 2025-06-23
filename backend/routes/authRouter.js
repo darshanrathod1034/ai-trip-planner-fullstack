@@ -45,11 +45,51 @@ router.post('/sendotp', async (req, res) => {
 
     // Send OTP via email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Trip Planner OTP Verification',
-      text: `Your OTP for Trip planner authentication is: ${otp}. It is valid for 5 minutes. Do not share it with anyone. thanks for visiting our website.`,
-    });
+  from: process.env.EMAIL_USER,
+  to: email,
+  subject: '🌍 Trip Planner - Your OTP Code',
+  html: `
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%); color: #2d3748; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="https://w0.peakpx.com/wallpaper/740/955/HD-wallpaper-tour-across-world-attractions-culture-travel-visit.jpg" alt="Trip Planner Logo" width="150" style="border-radius: 8px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);" />
+  </div>
+  
+  <h2 style="color: #2b6cb0; font-size: 24px; text-align: center; margin-bottom: 5px;">Your Trip Planner Verification Code</h2>
+  <p style="text-align: center; color: #4a5568; margin-bottom: 30px;">Ready to explore the world? First, let's verify your email</p>
+  
+  <div style="background: white; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+    <p style="margin-bottom: 15px; color: #4a5568;">Your one-time verification code:</p>
+    
+    <div style="display: inline-block; position: relative; margin-bottom: 15px;">
+      <div style="font-size: 28px; font-weight: bold; letter-spacing: 2px; padding: 12px 25px; background: #ebf8ff; color: #2b6cb0; border-radius: 8px; display: inline-block; border: 1px dashed #90cdf4;">
+        ${otp}
+      </div>
+      <div style="margin-top: 10px; font-size: 14px; color: #718096;">
+        (Select and copy this code manually)
+      </div>
+    </div>
+    
+    <p style="font-size: 14px; color: #718096; margin-bottom: 0;">This code expires in <strong style="color: #e53e3e;">5 minutes</strong></p>
+  </div>
+  
+  <div style="text-align: center; margin-bottom: 25px;">
+    <p style="color: #4a5568;">Simply enter this code in the verification screen to continue your travel planning journey.</p>
+  </div>
+  
+  <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center;">
+    <p style="font-size: 12px; color: #718096; margin-bottom: 5px;">Having trouble? Try requesting a new code.</p>
+    <p style="font-size: 12px; color: #718096;">For security reasons, do not share this code with anyone.</p>
+  </div>
+  
+  <footer style="text-align: center; margin-top: 30px;">
+    <p style="font-size: 12px; color: #a0aec0;">© 2025 Trip Planner. All rights reserved.</p>
+    <p style="font-size: 12px; color: #a0aec0;">Explore the world with confidence</p>
+  </footer>
+</div>
+`
+});
+
+
 
     res.status(200).json({ message: 'OTP sent successfully' });
   } catch (error) {
