@@ -11,7 +11,7 @@ Generate **day-wise optimized itineraries** based on destination, budget, intere
 |----------------|------------------------------------------------------------------------------|
 | **Frontend**    | React.js, TailwindCSS                                                       |
 | **Backend**     | Node.js, Express.js                                                         |
-| **AI & APIs**   | Google Maps API, Distance Matrix, Google Geocoding, Unsplash API, GPT       |
+| **AI & APIs**   | Google Maps API, Distance Matrix, Google Geocoding, Unsplash API,           |
 | **Database**    | MongoDB, Mongoose                                                           |
 | **Auth & Security** | JWT, bcrypt, OTP Email Verification, Cookie-based Sessions             |
 
